@@ -27,10 +27,8 @@ io.on('connection', (socket) => {
       // Make both player joins each other room
       sockets[p2sid].join(p1sid)
       sockets[p1sid].join(p2sid)
-      io.to(p1sid).to(p2sid).emit('game_starts', {
-        "player1": p1sid,
-        "player2": p2sid
-      })
+      io.to(p1sid).emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
+      io.to(p2sid).emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
     }
 
   })
@@ -39,9 +37,6 @@ io.on('connection', (socket) => {
     const index = queue.indexOf(socket.id)
     if (index != -1) queue.splice(index, 1)
     delete sockets[socket.id]
-  })
-  socket.on('ready', () => {
-    socket.to(socket.id).emit('other_ready')
   })
   // move = {x: int,y: int}
   // update move on other device
