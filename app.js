@@ -38,6 +38,7 @@ io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} disconnected!`)
     const index = queue.indexOf(socket.id)
     if (index != -1) queue.splice(index, 1)
+    delete sockets[socket.id]
   })
   socket.on('ready', () => {
     socket.to(socket.id).emit('other_ready')
