@@ -24,9 +24,10 @@ io.on('connection', (socket) => {
       const p1sid = queue.shift()
       const p2sid = queue.shift()
       console.log(`Game ${p1sid} vs ${p2sid} starts`)
-      // Make 2nd player join 1st player room
+      // Make both player joins each other room
       sockets[p2sid].join(p1sid)
-      io.to(p1sid).emit('game_starts', {
+      sockets[p1sid].join(p2sid)
+      io.to(p1sid).to(p2sid).emit('game_starts', {
         "player1": p1sid,
         "player2": p2sid
       })
@@ -35,7 +36,11 @@ io.on('connection', (socket) => {
   })
   socket.on('disconnect', () => {
     console.log(`Socket ${socket.id} disconnected!`)
-    queue.filter(id => id !== socket.id)
+    const index = queue.indexOf(socket.id)
+    if (index != -1) queue.splice(index, 1)
+  })
+  socket.on('ready', () => {
+    socket.to(socket.id).emit('other_ready')
   })
 })
 server.listen(PORT, () => {
