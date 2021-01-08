@@ -1,0 +1,41 @@
+const express = require('express')
+const app = express();
+const http = require('http');
+const server = http.Server(app);
+const io = require('socket.io')(server);
+const PORT = process.env.PORT || 3000
+
+app.get('/', (req, res) => {
+  res.send({
+    'message': 'Hello World'
+  })
+});
+
+const queue = []
+const sockets = {}
+io.on('connection', (socket) => {
+  console.log(`Socket ${socket.id} connected!`)
+  sockets[socket.id] = socket
+  socket.on('matchmaking', () => {
+    queue.push(socket.id);
+    console.log(queue)
+    if (queue.length >= 2) {
+      const p1sid = queue.shift()
+      const p2sid = queue.shift()
+      console.log(`Game ${p1sid} vs ${p2sid} starts`)
+      sockets[p2sid].join(p1sid)
+      io.to(p1sid).emit('game_starts', {
+        "player1": p1sid,
+        "player2": p2sid
+      })
+    }
+
+  })
+  socket.on('disconnect', () => {
+    console.log(`Socket ${socket.id} disconnected!`)
+    queue.filter(id => id !== socket.id)
+  })
+})
+server.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT} `);
+});
