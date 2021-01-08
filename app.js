@@ -20,9 +20,11 @@ io.on('connection', (socket) => {
     queue.push(socket.id);
     console.log(queue)
     if (queue.length >= 2) {
+      // Remove 2 first players from queue
       const p1sid = queue.shift()
       const p2sid = queue.shift()
       console.log(`Game ${p1sid} vs ${p2sid} starts`)
+      // Make 2nd player join 1st player room
       sockets[p2sid].join(p1sid)
       io.to(p1sid).emit('game_starts', {
         "player1": p1sid,
