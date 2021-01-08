@@ -43,6 +43,15 @@ io.on('connection', (socket) => {
   socket.on('ready', () => {
     socket.to(socket.id).emit('other_ready')
   })
+  // move = {x: int,y: int}
+  // update move on other device
+  socket.on('move', (move) => {
+    socket.to(socket.id).emit('move', move)
+  })
+  // place bomb on other device
+  socket.on('place_bomb', () => {
+    socket.to(socket.id).emit('place_bomb')
+  })
 })
 server.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT} `);
