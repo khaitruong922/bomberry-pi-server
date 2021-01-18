@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
       sockets[p2sid].join(p1sid)
       sockets[p1sid].join(p2sid)
       sockets[p1sid].broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
-      sockets[p2sid].broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
+      sockets[p2sid].broadcast.emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
     }
 
   })
