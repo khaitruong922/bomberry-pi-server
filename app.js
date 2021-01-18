@@ -41,11 +41,11 @@ io.on('connection', (socket) => {
   // move = {x: int,y: int}
   // update move on other device
   socket.on('move', (move) => {
-    socket.broadcast.to(socket.id).emit('move', move)
+    socket.broadcast.emit('move', move)
   })
   // place bomb on other device
   socket.on('place_bomb', () => {
-    socket.broadcast.to(socket.id).emit('place_bomb')
+    socket.broadcast.emit('place_bomb')
   })
 })
 server.listen(PORT, () => {
