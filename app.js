@@ -27,8 +27,8 @@ io.on('connection', (socket) => {
       // Make both player joins each other room
       sockets[p2sid].join(p1sid)
       sockets[p1sid].join(p2sid)
-      socket.broadcast.to(p1sid).emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
-      socket.broadcast.to(p2sid).emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
+      sockets[p1sid].broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
+      sockets[p2sid].broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
     }
 
   })
