@@ -27,8 +27,8 @@ io.on('connection', (socket) => {
       // Make both player joins each other room
       sockets[p2sid].join(p1sid)
       sockets[p1sid].join(p2sid)
-      socket.broadcast(p1sid).emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
-      socket.broadcast(p2sid).emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
+      socket.broadcast.to(p1sid).emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
+      socket.broadcast.to(p2sid).emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
     }
 
   })
@@ -41,11 +41,11 @@ io.on('connection', (socket) => {
   // move = {x: int,y: int}
   // update move on other device
   socket.on('move', (move) => {
-    socket.broadcast(socket.id).emit('move', move)
+    socket.broadcast.to(socket.id).emit('move', move)
   })
   // place bomb on other device
   socket.on('place_bomb', () => {
-    socket.broadcast(socket.id).emit('place_bomb')
+    socket.broadcast.to(socket.id).emit('place_bomb')
   })
 })
 server.listen(PORT, () => {
