@@ -47,6 +47,9 @@ io.on('connection', (socket) => {
   socket.on('place_bomb', () => {
     socket.broadcast.to(socket.id).emit('place_bomb')
   })
+  socket.on('die', () => {
+    socket.broadcast.to(socket.id).emit('die')
+  })
 })
 server.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT} `);
