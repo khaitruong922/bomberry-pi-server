@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
     }
   })
   socket.on('disconnect', () => {
-    const index = queue.indexOf(socket.id)
+    const index = queue.indexOf(socket)
     if (index != -1) queue.splice(index, 1)
   })
   socket.on('move', (move) => {
