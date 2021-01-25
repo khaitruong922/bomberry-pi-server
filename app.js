@@ -12,43 +12,30 @@ app.get('/', (req, res) => {
 });
 
 const queue = []
-const sockets = {}
 io.on('connection', (socket) => {
-  console.log(`Socket ${socket.id} connected!`)
-  sockets[socket.id] = socket
   socket.on('matchmaking', () => {
-    queue.push(socket.id);
-    console.log(queue)
+    queue.push(socket);
     if (queue.length >= 2) {
       // Remove 2 first players from queue
-      const p1sid = queue.shift()
-      const p2sid = queue.shift()
-      console.log(`Game ${p1sid} vs ${p2sid} starts`)
+      const p1 = queue.shift()
+      const p2 = queue.shift()
       // Make both player joins each other room
-      sockets[p2sid].join(p1sid)
-      sockets[p1sid].join(p2sid)
-      sockets[p1sid].broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
-      sockets[p2sid].broadcast.emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
+      p1.join(p2.id)
+      p2.join(p1.id)
+      // Start game on both Pi with initial position
+      p1.broadcast.emit('start_game', { x1: 0, y1: 0, x2: 7, y2: 7 })
+      p2.broadcast.emit('start_game', { x1: 7, y1: 7, x2: 0, y2: 0 })
     }
-
   })
   socket.on('disconnect', () => {
-    console.log(`Socket ${socket.id} disconnected!`)
     const index = queue.indexOf(socket.id)
     if (index != -1) queue.splice(index, 1)
-    delete sockets[socket.id]
   })
-  // move = {x: int,y: int}
-  // update move on other device
   socket.on('move', (move) => {
     socket.broadcast.to(socket.id).emit('move', move)
   })
-  // place bomb on other device
   socket.on('place_bomb', () => {
     socket.broadcast.to(socket.id).emit('place_bomb')
-  })
-  socket.on('die', () => {
-    socket.broadcast.to(socket.id).emit('die')
   })
 })
 server.listen(PORT, () => {
